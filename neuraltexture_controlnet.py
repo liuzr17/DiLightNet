@@ -161,6 +161,7 @@ class NeuralTextureControlNetModel(ControlNetModel):
             flip_sin_to_cos: bool = True,
             freq_shift: int = 0,
             down_block_types: Tuple[str, ...] = (
+                    # 交叉注意力下采样
                     "CrossAttnDownBlock2D",
                     "CrossAttnDownBlock2D",
                     "CrossAttnDownBlock2D",
@@ -337,7 +338,7 @@ class NeuralTextureControlNetModel(ControlNetModel):
             input_channel = output_channel
             output_channel = block_out_channels[i]
             is_final_block = i == len(block_out_channels) - 1
-
+# 根据块类型获得块模型的结构
             down_block = get_down_block(
                 down_block_type,
                 num_layers=layers_per_block,
@@ -409,6 +410,7 @@ class NeuralTextureControlNetModel(ControlNetModel):
 
     @classmethod
     def from_unet(
+        # cls是引用NeuralTextureControlNetModel类本身
             cls,
             unet: UNet2DConditionModel,
             controlnet_conditioning_channel_order: str = "rgb",
