@@ -680,6 +680,7 @@ def main(args):
     text_encoder_cls = import_model_class_from_model_name_or_path(args.pretrained_model_name_or_path, args.revision)
 
     # Load scheduler and models
+    # 训练的时候怎么用的是DDPM调度器
     noise_scheduler = DDPMScheduler.from_pretrained(args.pretrained_model_name_or_path, subfolder="scheduler",
                                                     beta_schedule='linear' if args.linear_noise_scheduling else 'scaled_linear',
                                                     revision=args.revision)
@@ -983,6 +984,7 @@ def main(args):
         for step, batch in enumerate(train_dataloader):
             with accelerator.accumulate(controlnet):
                 # Convert images to latent space
+                # pixel_values是目标图像 ; conditioning_pixel_values是条件图像
                 latents = vae.encode(batch["pixel_values"].to(dtype=weight_dtype)).latent_dist.sample()
                 latents = latents * vae.config.scaling_factor
 
